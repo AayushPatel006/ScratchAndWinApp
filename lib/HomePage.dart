@@ -17,6 +17,7 @@ class _HomePageState extends State<HomePage> {
   // TODO get an array
   List<String> itemArray = List<String>.generate(25, (index) => "empty");
   int luckyNumber = 0;
+  int counter = 0;
 
   // TODO init arrray with 23 elements
   @override
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     itemArray = List<String>.generate(25, (index) => "empty");
     genetateRandomNumber();
+    print(luckyNumber);
   }
 
   genetateRandomNumber() {
@@ -52,10 +54,21 @@ class _HomePageState extends State<HomePage> {
     if (luckyNumber == index) {
       setState(() {
         itemArray[index] = 'lucky';
+        showAll();
+        Future.delayed(Duration(seconds: 2), () {
+          resetGame();
+        });
       });
     } else {
       setState(() {
         itemArray[index] = 'unlucky';
+      });
+    }
+    counter += 1;
+    if (counter > 4) {
+      showAll();
+      Future.delayed(Duration(seconds: 2), () {
+        resetGame();
       });
     }
   }
@@ -73,6 +86,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       itemArray = List<String>.filled(25, "empty");
       genetateRandomNumber();
+      counter = 0;
     });
   }
 
