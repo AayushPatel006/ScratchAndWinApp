@@ -10,13 +10,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   // TODO import image
-  AssetImage circle = AssetImage('images/cirlce.png')
-  AssetImage lucky = AssetImage('images/rupee.png')
-  AssetImage unlucky = AssetImage('images/sadFace.png')
+  AssetImage circle = AssetImage('images/circle.png');
+  AssetImage lucky = AssetImage('images/rupee.png');
+  AssetImage unlucky = AssetImage('images/sadFace.png');
 
   // TODO get an array
   List<String> itemArray = List<String>.generate(25, (index) => "empty");
-  int? luckyNumber;
+  int luckyNumber = 0;
 
   // TODO init arrray with 23 elements
   @override
@@ -25,18 +25,48 @@ class _HomePageState extends State<HomePage> {
     itemArray = List<String>.generate(25, (index) => "empty");
     genetateRandomNumber();
   }
+
   genetateRandomNumber() {
     setState(() {
       luckyNumber = Random().nextInt(25);
     });
   }
-  
 
   // TODO define getImage method
+  AssetImage getImage(int index) {
+    String currentState = this.itemArray[index];
+    switch (currentState) {
+      case 'lucky':
+        return lucky;
+      case 'unlucky':
+        return unlucky;
+      default:
+        return circle;
+        break;
+    }
+    return circle;
+  }
 
   // TODO play game method
+  playGame(int index) {
+    if (luckyNumber == index) {
+      setState(() {
+        itemArray[index] = 'lucky';
+      });
+    } else {
+      setState(() {
+        itemArray[index] = 'unlucky';
+      });
+    }
+  }
 
   // TODO showall
+  showAll() {
+    setState(() {
+      itemArray = List<String>.filled(25, "unlucky");
+      itemArray[luckyNumber] = "lucky";
+    });
+  }
 
   // TODO reset all
   resetGame() {
@@ -50,7 +80,51 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Scratch Application"),
+        title: Text("Scratch and win"),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Expanded(
+              child: GridView.builder(
+            padding: EdgeInsets.all(20.0),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 5,
+                childAspectRatio: 1.0,
+                crossAxisSpacing: 10.0,
+                mainAxisSpacing: 10.0),
+            itemCount: itemArray.length,
+            itemBuilder: (context, index) => SizedBox(
+                width: 50.0,
+                height: 50.0,
+                child: ElevatedButton(
+                  onPressed: () => this.playGame(index),
+                  child: Image(image: this.getImage(index)),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.white, // Background color
+                  ),
+                )),
+          )),
+          Container(
+            margin: EdgeInsets.all(15.0),
+            child: ElevatedButton(
+              child: Text("Show All"),
+              onPressed: showAll,
+            ),
+          ),
+          Container(
+              margin: EdgeInsets.all(15.0),
+              child: ElevatedButton(
+                child: Text("Rest Game"),
+                onPressed: resetGame,
+              )),
+          Container(
+            child: Text("Game by Aayush Patel"),
+            alignment: Alignment.center,
+            padding: EdgeInsets.fromLTRB(10, 10, 10, 30),
+          )
+        ],
       ),
     );
   }
